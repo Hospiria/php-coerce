@@ -1,6 +1,8 @@
 <?php
 namespace MadisonSolutions\Coerce;
 
+use InvalidArgumentException;
+
 class Coerce
 {
     /**
@@ -40,6 +42,21 @@ class Coerce
     }
 
     /**
+     * Coerce a value to string type
+     *
+     * @param mixed $input The input value
+     * @return string The coerced value
+     * @throws InvalidArgumentException If the input value cannot be coerced to a string
+     */
+    public static function toStringOrFail($input) : string
+    {
+        if (! Coerce::toString($input, $output)) {
+            throw new InvalidArgumentException("Unable to coerce value to string");
+        }
+        return $output;
+    }
+
+    /**
      * Coerce a value to integer type
      *
      * Notes
@@ -71,6 +88,21 @@ class Coerce
             return ( $output == $input );
         }
         return false;
+    }
+
+    /**
+     * Coerce a value to integer type
+     *
+     * @param mixed $input The input value
+     * @return int The coerced value
+     * @throws InvalidArgumentException If the input value cannot be coerced to an integer
+     */
+    public static function toIntOrFail($input) : int
+    {
+        if (! Coerce::toInt($input, $output)) {
+            throw new InvalidArgumentException("Unable to coerce value to integer");
+        }
+        return $output;
     }
 
     /**
@@ -113,6 +145,21 @@ class Coerce
     }
 
     /**
+     * Coerce a value to float type
+     *
+     * @param mixed $input The input value
+     * @return float The coerced value
+     * @throws InvalidArgumentException If the input value cannot be coerced to a float
+     */
+    public static function toFloatOrFail($input) : float
+    {
+        if (! Coerce::toFloat($input, $output)) {
+            throw new InvalidArgumentException("Unable to coerce value to float");
+        }
+        return $output;
+    }
+
+    /**
      * Coerce a value to type suitable for use as a key in a PHP array (string or int)
      *
      * Notes:
@@ -143,6 +190,21 @@ class Coerce
             return true;
         }
         return false;
+    }
+
+    /**
+     * Coerce a value to a type suitable for use as an array key (string or int)
+     *
+     * @param mixed $input The input value
+     * @return mixed The coerced value
+     * @throws InvalidArgumentException If the input value cannot be coerced to an array key value
+     */
+    public static function toArrayKeyOrFail($input)
+    {
+        if (! Coerce::toArrayKey($input, $output)) {
+            throw new InvalidArgumentException("Unable to coerce value to array key");
+        }
+        return $output;
     }
 
     /**
@@ -203,5 +265,20 @@ class Coerce
             }
         }
         return false;
+    }
+
+    /**
+     * Coerce a value to a boolean
+     *
+     * @param mixed $input The input value
+     * @return bool The coerced value
+     * @throws InvalidArgumentException If the input value cannot be coerced to a boolean
+     */
+    public static function toBoolOrFail($input) : bool
+    {
+        if (! Coerce::toBool($input, $output)) {
+            throw new InvalidArgumentException("Unable to coerce value to boolean");
+        }
+        return $output;
     }
 }

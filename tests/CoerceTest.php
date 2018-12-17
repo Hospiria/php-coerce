@@ -51,6 +51,8 @@ class CoerceTest extends TestCase
             $result = Coerce::$method($test[0], $output);
             $this->assertSame(true, $result, "Could not coerce value " . $this->debugval($test[0]) . " using method {$method}");
             $this->assertSame($test[1], $output);
+            $method_or_fail = "{$method}OrFail";
+            $this->assertSame($test[1], Coerce::$method_or_fail($test[0]));
         }
     }
 
@@ -59,6 +61,14 @@ class CoerceTest extends TestCase
         foreach ($inputs as $input) {
             $result = Coerce::$method($input, $output);
             $this->assertSame(false, $result, "Should not have been able to coerce value " . $this->debugval($input) . " using method {$method} but was coerced to value " . $this->debugval($output));
+            $method_or_fail = "{$method}OrFail";
+            $thrown = false;
+            try {
+                $output = Coerce::$method_or_fail($input);
+            } catch (InvalidArgumentException $e) {
+                $thrown = true;
+            }
+            $this->assertTrue($thrown, "InvalidArgumentException should have been thrown attempting to coerce value " . $this->debugval($input) . " using method {$method_or_fail} but was coerced to value " . $this->debugval($output));
         }
     }
 
