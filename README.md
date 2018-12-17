@@ -9,11 +9,11 @@ There are 2 functions for each target data type, which differ in the way that fa
 
 ### Version 1
 
-`Coerce::toString($input, &$output) : bool`
-`Coerce::toInt($input, &$output) : bool`
-`Coerce::toFloat($input, &$output) : bool`
-`Coerce::toArrayKey($input, &$output) : bool`
-`Coerce::toBool($input, &$output) : bool`
+`Coerce::toString($input, &$output) : bool`  
+`Coerce::toInt($input, &$output) : bool`  
+`Coerce::toFloat($input, &$output) : bool`  
+`Coerce::toArrayKey($input, &$output) : bool`  
+`Coerce::toBool($input, &$output) : bool`  
 
 In this version, the return value is a boolean indicating whether or not the coercion was successful (with the coerced value being stored in the `$output` parameter.
 
@@ -26,11 +26,11 @@ If the function returns `false` then the value of `$output` should be considered
 
 ### Version 2
 
-`Coerce::toStringOrFail($input) : string`
-`Coerce::toIntOrFail($input) : int`
-`Coerce::toFloatOrFail($input) : float`
-`Coerce::toArrayKeyOrFail($input) : mixed`
-`Coerce::toBoolOrFail($input) : bool`
+`Coerce::toStringOrFail($input) : string`  
+`Coerce::toIntOrFail($input) : int`  
+`Coerce::toFloatOrFail($input) : float`  
+`Coerce::toArrayKeyOrFail($input) : mixed`  
+`Coerce::toBoolOrFail($input) : bool`  
 
 In this version, the coerced value is the return value from the function, and if coercion failed then an `InvalidArgumentException` will be thrown.
 
@@ -43,8 +43,7 @@ Form validation, where user input in `$_POST` cannot be trusted
 ```php
 use MadisonSolutions\Coerce\Coerce;
 
-$age_input = $_POST['age'] ?? null;
-if (! Coerce::toInt($age_input, $age)) {
+if (! Coerce::toInt($_POST['age'] ?? null, $age)) {
     die("Age must be an integer");
 }
 // $age is definitely now an integer, but might be negative
