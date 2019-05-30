@@ -59,10 +59,14 @@ class CoerceTest extends TestCase
     protected function assertCoersionsFails($method, $inputs)
     {
         foreach ($inputs as $input) {
+            $output = 'initial'; // Set output initially to a string so that we can verify it gets nulled by the failed coercion
             $result = Coerce::$method($input, $output);
             $this->assertSame(false, $result, "Should not have been able to coerce value " . $this->debugval($input) . " using method {$method} but was coerced to value " . $this->debugval($output));
+            $this->assertNull($output, "Output should have been null after attempt to coerce value " . $this->debugval($input) . " using method {$method} but was actually " . $this->debugval($output));
+
             $method_or_fail = "{$method}OrFail";
             $thrown = false;
+            $output = 'initial';
             try {
                 $output = Coerce::$method_or_fail($input);
             } catch (InvalidArgumentException $e) {
@@ -75,7 +79,8 @@ class CoerceTest extends TestCase
     public function testCoerceToString()
     {
         $foo = new class() {
-            public function __toString() {
+            public function __toString()
+            {
                 return 'foo';
             }
         };

@@ -38,6 +38,7 @@ class Coerce
             $output = $input->__toString();
             return true;
         }
+        $output = null;
         return false;
     }
 
@@ -83,10 +84,11 @@ class Coerce
         if (is_string($input) && is_numeric($input)) {
             $input = (float) $input;
         }
-        if (is_float($input) && is_finite($input)) {
-            $output = (int) $input;
-            return ( $output == $input );
+        if (is_float($input) && is_finite($input) && intval($input) == $input) {
+            $output = intval($input);
+            return true;
         }
+        $output = null;
         return false;
     }
 
@@ -126,6 +128,7 @@ class Coerce
                 $output = $input;
                 return true;
             } else {
+                $output = null;
                 return false;
             }
         }
@@ -141,6 +144,7 @@ class Coerce
             $output = floatval($input);
             return true;
         }
+        $output = null;
         return false;
     }
 
@@ -176,9 +180,11 @@ class Coerce
     public static function toArrayKey($input, &$output) : bool
     {
         if (is_null($input) || is_bool($input)) {
+            $output = null;
             return false;
         }
         if (is_float($input) && ! is_finite($input)) {
+            $output = null;
             return false;
         }
         if (Coerce::toInt($input, $intval)) {
@@ -189,6 +195,7 @@ class Coerce
             $output = $stringval;
             return true;
         }
+        $output = null;
         return false;
     }
 
@@ -239,6 +246,7 @@ class Coerce
                 $output = true;
                 return true;
             } else {
+                $output = null;
                 return false;
             }
         }
@@ -261,9 +269,11 @@ class Coerce
                     $output = false;
                     return true;
                 default:
+                    $output = null;
                     return false;
             }
         }
+        $output = null;
         return false;
     }
 
