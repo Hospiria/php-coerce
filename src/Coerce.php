@@ -6,11 +6,16 @@ use LogicException;
 
 class Coerce
 {
+    protected static function isNullish(mixed $input): bool
+    {
+        return (is_null($input) || $input === '');
+    }
+
     /**
      * Coerce a value to string type
      *
      * Notes:
-     * Boolean values are coerced to strings 'true' or 'false' (unless REJECT_BOOL is used)
+     * Boolean values are coerced to strings 'true' or 'false' (unless $reject_bool=true)
      * Integers and floats are coerced to their standard string representation
      * No attempt is made to coerce array inputs to a string - the function will return false
      * Objects will be coerced if and only if, they have a defined __toString() method
@@ -26,7 +31,7 @@ class Coerce
     public static function toString(mixed $input, mixed &$output, bool $reject_bool = false): bool
     {
         $output = '';
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             return true;
         }
         if (is_bool($input)) {
@@ -58,7 +63,7 @@ class Coerce
      */
     public static function toStringOrNull(mixed $input, mixed &$output, bool $reject_bool = false): bool
     {
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             $output = null;
             return true;
         }
@@ -117,7 +122,7 @@ class Coerce
     public static function toInt(mixed $input, mixed &$output, bool $reject_bool = false, bool $round_floats = false, bool $reject_negative = false, bool $reject_zero = false): bool
     {
         $output = 0;
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             return false;
         } elseif (is_int($input)) {
             $output = $input;
@@ -157,7 +162,7 @@ class Coerce
      */
     public static function toIntOrNull(mixed $input, mixed &$output, bool $reject_bool = false, bool $round_floats = false, bool $reject_negative = false, bool $reject_zero = false): bool
     {
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             $output = null;
             return true;
         }
@@ -216,7 +221,7 @@ class Coerce
     public static function toFloat(mixed $input, mixed &$output, bool $reject_bool = false): bool
     {
         $output = 0.0;
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             return false;
         }
         if (is_string($input) && is_numeric($input)) {
@@ -255,7 +260,7 @@ class Coerce
      */
     public static function toFloatOrNull(mixed $input, mixed &$output, bool $reject_bool = false): bool
     {
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             $output = null;
             return true;
         }
@@ -313,7 +318,7 @@ class Coerce
     public static function toArrayKey(mixed $input, mixed &$output): bool
     {
         $output = '';
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             return false;
         }
         if (is_bool($input)) {
@@ -343,7 +348,7 @@ class Coerce
      */
     public static function toArrayKeyOrNull(mixed $input, mixed &$output): bool
     {
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             $output = null;
             return true;
         }
@@ -400,7 +405,7 @@ class Coerce
     public static function toBool(mixed $input, mixed &$output): bool
     {
         $output = false;
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             return false;
         }
         if (is_bool($input)) {
@@ -453,7 +458,7 @@ class Coerce
      */
     public static function toBoolOrNull(mixed $input, mixed &$output): bool
     {
-        if (is_null($input) || $input === '') {
+        if (Coerce::isNullish($input)) {
             $output = null;
             return true;
         }

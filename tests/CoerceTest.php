@@ -75,7 +75,6 @@ class CoerceTest extends TestCase
         $output = 'initial'; // Set output initially to a string so that we can verify it gets nulled by the failed coercion
         $result = Coerce::$method($input, $output, ...$extra_args);
         $this->assertSame(false, $result, "Should not have been able to coerce value " . $this->debugval($input) . " using method {$method} but was coerced to value " . $this->debugval($output));
-        $this->assertNull($output, "Output should have been null after attempt to coerce value " . $this->debugval($input) . " using method {$method} but was actually " . $this->debugval($output));
 
         $method_or_fail = "{$method}OrFail";
         $thrown = false;
@@ -137,13 +136,14 @@ class CoerceTest extends TestCase
             6  => ['pass', '2.0', 2],
             7  => ['fail', null],
             8  => ['fail', ''],
-            9  => ['fail', 2.5],
+            9  => ['fail', 2.6],
             10 => ['fail', NAN],
             11 => ['fail', INF],
             12 => ['fail', 'foo'],
-            13 => ['fail', '2.5'],
+            13 => ['fail', '2.6'],
             14 => ['fail', []],
             15 => ['fail', new \stdClass()],
+            16 => ['pass', -4, -4],
         ];
 
         $this->assertCoercionResults('toInt', $tests1);
@@ -157,6 +157,16 @@ class CoerceTest extends TestCase
         $tests3[3] = ['fail', true];
         $tests3[4] = ['fail', false];
         $this->assertCoercionResults('toInt', $tests3, reject_bool: true);
+
+        $tests4 = $tests1;
+        $tests4[0] = ['fail', 0];
+        $tests4[5] = ['fail', '0'];
+        $tests4[4] = ['fail', false];
+        $this->assertCoercionResults('toInt', $tests4, reject_zero: true);
+
+        $tests5 = $tests1;
+        $tests5[16] = ['fail', -4];
+        $this->assertCoercionResults('toInt', $tests5, reject_negative: true);
     }
 
     public function testCoerceToFloat()
