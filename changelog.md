@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.0] - 2023-05-18
+
+### Breaking changes
+
+ - PHP version now required is at least 8.1
+ - Substantially changed the API - none of the functions accept a bitmask of flags any more, instead optional parameters specific to the particular function can be used to fine-tune coercion behaviour.
+ - Each type has a to{Type}OrNull variant and a to{Type}OrNullOrFail variant - this enables better type checking. In particular because the to{Type}OrFail variant now definitely returns Type (and not null).
+
+### Added
+
+ - Option in toInt to round numeric non-integer values to the nearest int, instead of rejecting
+ - Options in toInt for rejecting negative or zero values
+
+
 ## [1.2.0] - 2019-06-07
 
 ### Added
