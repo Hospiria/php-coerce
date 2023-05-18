@@ -45,15 +45,15 @@ class CoerceTest extends TestCase
         }
     }
 
-    protected function assertCoercionResults($method, $tests, int $flags = 0)
+    protected function assertCoercionResults($method, $tests, ...$extra_args)
     {
         foreach ($tests as $test) {
             switch ($test[0]) {
                 case 'pass':
-                    $this->assertCoersionsSucceeds($method, $test[1], $test[2], $flags);
+                    $this->assertCoersionsSucceeds($method, $test[1], $test[2], ...$extra_args);
                     break;
                 case 'fail':
-                    $this->assertCoersionsFails($method, $test[1], $flags);
+                    $this->assertCoersionsFails($method, $test[1], ...$extra_args);
                     break;
                 default:
                     throw new \Exception("Test result should be pass or fail but got " . $this->debugval($test[0]));
@@ -61,19 +61,19 @@ class CoerceTest extends TestCase
         }
     }
 
-    protected function assertCoersionsSucceeds($method, $input, $expected_output, int $flags = 0)
+    protected function assertCoersionsSucceeds($method, $input, $expected_output, ...$extra_args)
     {
-        $result = Coerce::$method($input, $output, $flags);
+        $result = Coerce::$method($input, $output, ...$extra_args);
         $this->assertSame(true, $result, "Could not coerce value " . $this->debugval($input) . " using method {$method}");
         $this->assertSame($expected_output, $output);
         $method_or_fail = "{$method}OrFail";
-        $this->assertSame($expected_output, Coerce::$method_or_fail($input, $flags));
+        $this->assertSame($expected_output, Coerce::$method_or_fail($input, ...$extra_args));
     }
 
-    protected function assertCoersionsFails($method, $input, int $flags = 0)
+    protected function assertCoersionsFails($method, $input, ...$extra_args)
     {
         $output = 'initial'; // Set output initially to a string so that we can verify it gets nulled by the failed coercion
-        $result = Coerce::$method($input, $output, $flags);
+        $result = Coerce::$method($input, $output, ...$extra_args);
         $this->assertSame(false, $result, "Should not have been able to coerce value " . $this->debugval($input) . " using method {$method} but was coerced to value " . $this->debugval($output));
         $this->assertNull($output, "Output should have been null after attempt to coerce value " . $this->debugval($input) . " using method {$method} but was actually " . $this->debugval($output));
 
@@ -81,7 +81,7 @@ class CoerceTest extends TestCase
         $thrown = false;
         $output = 'initial';
         try {
-            $output = Coerce::$method_or_fail($input, $flags);
+            $output = Coerce::$method_or_fail($input, ...$extra_args);
         } catch (InvalidArgumentException $e) {
             $thrown = true;
         }
@@ -117,12 +117,12 @@ class CoerceTest extends TestCase
         $tests2 = $tests1;
         $tests2[0] = ['pass', null, null];
         $tests2[1] = ['pass', '', null];
-        $this->assertCoercionResults('toString', $tests2, Coerce::NULLABLE);
+        $this->assertCoercionResults('toStringOrNull', $tests2);
 
         $tests3 = $tests1;
         $tests3[7] = ['fail', true];
         $tests3[8] = ['fail', false];
-        $this->assertCoercionResults('toString', $tests3, Coerce::REJECT_BOOL);
+        $this->assertCoercionResults('toString', $tests3, reject_bool: true);
     }
 
     public function testCoerceToInt()
@@ -151,12 +151,12 @@ class CoerceTest extends TestCase
         $tests2 = $tests1;
         $tests2[7] = ['pass', null, null];
         $tests2[8] = ['pass', '', null];
-        $this->assertCoercionResults('toInt', $tests2, Coerce::NULLABLE);
+        $this->assertCoercionResults('toIntOrNull', $tests2);
 
         $tests3 = $tests1;
         $tests3[3] = ['fail', true];
         $tests3[4] = ['fail', false];
-        $this->assertCoercionResults('toInt', $tests3, Coerce::REJECT_BOOL);
+        $this->assertCoercionResults('toInt', $tests3, reject_bool: true);
     }
 
     public function testCoerceToFloat()
@@ -183,12 +183,12 @@ class CoerceTest extends TestCase
         $tests2 = $tests1;
         $tests2[7] = ['pass', null, null];
         $tests2[8] = ['pass', '', null];
-        $this->assertCoercionResults('toFloat', $tests2, Coerce::NULLABLE);
+        $this->assertCoercionResults('toFloatOrNull', $tests2);
 
         $tests3 = $tests1;
         $tests3[3] = ['fail', true];
         $tests3[4] = ['fail', false];
-        $this->assertCoercionResults('toFloat', $tests3, Coerce::REJECT_BOOL);
+        $this->assertCoercionResults('toFloat', $tests3, reject_bool: true);
     }
 
     public function testCoerceToBool()
@@ -218,15 +218,7 @@ class CoerceTest extends TestCase
         $tests2 = $tests1;
         $tests2[10] = ['pass', null, null];
         $tests2[11] = ['pass', '', null];
-        $this->assertCoercionResults('toBool', $tests2, Coerce::NULLABLE);
-
-        $thrown = false;
-        try {
-            Coerce::toBool(true, $output, Coerce::REJECT_BOOL);
-        } catch (LogicException $e) {
-            $thrown = true;
-        }
-        $this->assertTrue($thrown);
+        $this->assertCoercionResults('toBoolOrNull', $tests2);
     }
 
     public function testCoerceToArrayKey()
@@ -253,9 +245,6 @@ class CoerceTest extends TestCase
         $tests2 = $tests1;
         $tests2[7] = ['pass', null, null];
         $tests2[8] = ['pass', '', null];
-        $this->assertCoercionResults('toArrayKey', $tests2, Coerce::NULLABLE);
-
-        $tests3 = $tests1;
-        $this->assertCoercionResults('toArrayKey', $tests3, Coerce::REJECT_BOOL);
+        $this->assertCoercionResults('toArrayKeyOrNull', $tests2);
     }
 }
